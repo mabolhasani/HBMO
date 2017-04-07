@@ -13,5 +13,7 @@
         public double Speed { get; set; }
 
         public double Alpha { get; set; }
+
+        public double BroodViews { get; set; }
     }
 }

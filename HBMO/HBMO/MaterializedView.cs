@@ -27,7 +27,7 @@ namespace HBMO
 
             population = SetTvecForEachChromosome(lattice, population);
             //Step 3:
-            Chromosome queen = population.Min();
+            Chromosome queen = population.First(p => p.Tvec == population.Min(c => c.Tvec));
 
             for (int i = 0; i < generations; i++)
             {
@@ -68,9 +68,25 @@ namespace HBMO
                     }
                 }
 
+                //step 5:
+                List<Chromosome> broodViews = CrossOver(spermatheca, queen, crossOverProbability, hbmoInitialModel.BroodViews);
+
+                //step 6:
+                List<Chromosome> improvedBbroodViews = Mutation(lattice, broodViews, mutationProbability, 10, topViewCount);
+
+                //strp7:
+                Chromosome bestBroodView = improvedBbroodViews.First(p => p.Tvec == improvedBbroodViews.Max(c => c.Tvec));
+
+                if (bestBroodView.Tvec < queen.Tvec)
+                    queen = bestBroodView;
+
+                population.Clear();
+
+                population = _chromosome.PopulateChromosome(lattice, topViewCount, firstPoulationCount);
+                population = SetTvecForEachChromosome(lattice, population);
             }
 
-            return population.First(p => p.Tvec == population.Max(c => c.Tvec));
+            return queen;
         }
 
         private double CalculateFitnessFunction(List<View> lattice, List<View> chromosome)
@@ -94,36 +110,17 @@ namespace HBMO
             return sizeView + sizeSmaView;
         }
 
-        private List<Chromosome> TournamentSelection(List<Chromosome> population, float chance, int tournamentIteration)
+        private List<Chromosome> CrossOver(List<Chromosome> spermatheca, Chromosome queen, float probability,
+            double iteration)
         {
             Random random = new Random();
-            List<Chromosome> result = new List<Chromosome>();
-
-            for (int i = 0; i < tournamentIteration; i++)
-            {
-                Chromosome firstChromosome = population[random.Next(population.Count)];
-                Chromosome secondChromosome = population[random.Next(population.Count)];
-
-                if (random.NextDouble() < chance)
-                    result.Add(firstChromosome.Tvec >= secondChromosome.Tvec ? firstChromosome : secondChromosome);
-                else
-                    result.Add(firstChromosome.Tvec < secondChromosome.Tvec ? firstChromosome : secondChromosome);
-            }
-
-            return result;
-        }
-
-        private List<Chromosome> CrossOver(List<Chromosome> population, float probability,
-            int iteration)
-        {
-            Random random = new Random();
-            double crossOverPoint = Math.Floor((double)(population[0].Views.Count - 1) / 2);
+            double crossOverPoint = Math.Floor((double)(spermatheca[0].Views.Count - 1) / 2);
             List<Chromosome> result = new List<Chromosome>();
 
             for (int i = 0; i < iteration; i++)
             {
-                Chromosome father = population[random.Next(population.Count)];
-                Chromosome mother = population[random.Next(population.Count)];
+                Chromosome father = spermatheca[random.Next(spermatheca.Count)];
+                Chromosome mother = queen;
 
                 if (random.NextDouble() > probability)
                 {
@@ -136,7 +133,7 @@ namespace HBMO
                         secondChildViews.Add(mother.Views[j]);
                     }
 
-                    for (int j = (int)crossOverPoint + 1; j < population[0].Views.Count; j++)
+                    for (int j = (int)crossOverPoint + 1; j < spermatheca[0].Views.Count; j++)
                     {
                         firstChildViews.Add(mother.Views[j]);
                         secondChildViews.Add(father.Views[j]);
@@ -165,7 +162,7 @@ namespace HBMO
             return result;
         }
 
-        private List<Chromosome> Mutation(List<View> lattice, List<Chromosome> population, float probability,
+        private List<Chromosome> Mutation(List<View> lattice, List<Chromosome> broodViews, float probability,
             int iteration, int topViewCount)
         {
             Random random = new Random();
@@ -173,7 +170,7 @@ namespace HBMO
 
             for (int i = 0; i < iteration; i++)
             {
-                Chromosome chromosome = population[random.Next(population.Count)];
+                Chromosome chromosome = broodViews[random.Next(broodViews.Count)];
 
                 if (random.NextDouble() <= probability)
                 {
@@ -196,7 +193,7 @@ namespace HBMO
                 }
             }
 
-            return result;
+            return SetTvecForEachChromosome(lattice, result);
         }
 
         private bool IsValidChromosome(List<View> chromosome)

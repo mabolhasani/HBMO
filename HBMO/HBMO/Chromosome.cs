@@ -48,7 +48,8 @@ namespace HBMO
                 QsMax = qsMax,
                 QsMin = tvecMax / 10,
                 Speed = qsMax,
-                Alpha = 0.98f
+                Alpha = 0.98f,
+                BroodViews = 4
             };
         }
     }
