@@ -9,7 +9,7 @@
 
             MaterializedView materializedView = new MaterializedView(view, chromosome);
 
-            Chromosome result = materializedView.HbmoViewSelection(100, 10, .5f, .7f, .25f, 3, 10);
+            Chromosome result = materializedView.HbmoViewSelection(1000, 10, .5f, .7f, .25f, 3, 100);
         }
     }
 }
