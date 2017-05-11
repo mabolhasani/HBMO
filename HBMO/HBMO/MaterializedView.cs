@@ -72,7 +72,7 @@ namespace HBMO
                 List<Chromosome> broodViews = CrossOver(spermatheca, queen, crossOverProbability, hbmoInitialModel.BroodViews);
 
                 //step 6:
-                List<Chromosome> improvedBbroodViews = Mutation(lattice, broodViews, mutationProbability, 10, topViewCount);
+                List<Chromosome> improvedBbroodViews = Mutation(lattice, broodViews, mutationProbability, hbmoInitialModel.BroodViews, topViewCount);
 
                 //strp7:
                 Chromosome bestBroodView = improvedBbroodViews.First(p => p.Tvec == improvedBbroodViews.Max(c => c.Tvec));
@@ -163,7 +163,7 @@ namespace HBMO
         }
 
         private List<Chromosome> Mutation(List<View> lattice, List<Chromosome> broodViews, float probability,
-            int iteration, int topViewCount)
+            double iteration, int topViewCount)
         {
             Random random = new Random();
             List<Chromosome> result = new List<Chromosome>();

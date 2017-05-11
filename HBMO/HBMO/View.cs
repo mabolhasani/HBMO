@@ -18,7 +18,7 @@ namespace HBMO
 
         public List<View> CreateLattice()
         {
-            string input = System.IO.File.ReadAllText(@"D:\path.txt");
+            string input = System.IO.File.ReadAllText(@"D:\DataSet\TenDimention.txt");
             return JsonConvert.DeserializeObject<List<View>>(input).OrderBy(l => l.Level).ToList();
             //return new List<View>
             //{
