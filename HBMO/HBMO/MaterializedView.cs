@@ -117,7 +117,7 @@ namespace HBMO
             double crossOverPoint = Math.Floor((double)(spermatheca[0].Views.Count - 1) / 2);
             List<Chromosome> result = new List<Chromosome>();
 
-            for (int i = 0; i < iteration; i++)
+            while (result.Count < 100)
             {
                 Chromosome father = spermatheca[random.Next(spermatheca.Count)];
                 Chromosome mother = queen;
@@ -168,7 +168,7 @@ namespace HBMO
             Random random = new Random();
             List<Chromosome> result = new List<Chromosome>();
 
-            for (int i = 0; i < iteration; i++)
+            while (result.Count < 100)
             {
                 Chromosome chromosome = broodViews[random.Next(broodViews.Count)];
 
